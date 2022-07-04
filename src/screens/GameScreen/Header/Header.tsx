@@ -1,17 +1,12 @@
 import React from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
-import {constants} from '../../../styles/constants';
 import Robot from 'react-native-vector-icons/FontAwesome5';
 import Human from 'react-native-vector-icons/MaterialCommunityIcons';
 import Neutral from 'react-native-vector-icons/Feather';
 
-type HeaderProps = {
-  score: number;
-  action: any;
-  playerIcon: string | null;
-};
+import {constants} from '../../../styles/constants';
 
-const showIcon = (playerData: string | null) => {
+const selectIcon = (playerData: string) => {
   switch (playerData) {
     case 'machine':
       return <Robot name="robot" size={30} color="white" />;
@@ -24,18 +19,24 @@ const showIcon = (playerData: string | null) => {
   }
 };
 
-const Header = ({playerIcon, score, action}: HeaderProps) => {
+type Props = {
+  score: number;
+  action: () => void;
+  playerIcon: string;
+};
+
+const Header = ({playerIcon, score, action}: Props) => {
   return (
     <View style={styles.header}>
       <View style={styles.section}>
         <Text style={styles.text}>{`Score ${score}`}</Text>
       </View>
+
       <View style={[styles.section, styles.iconContainer]}>
-        {showIcon(playerIcon)}
+        {selectIcon(playerIcon)}
       </View>
-      <Pressable
-        onPress={action}
-        style={[styles.section, styles.buttonContainer]}>
+
+      <Pressable onPress={action} style={styles.section}>
         <Text style={styles.text}>
           <Text style={{color: constants.simonRed}}>S</Text>
           <Text style={{color: constants.simonYellow}}>T</Text>
@@ -69,5 +70,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonContainer: {},
 });

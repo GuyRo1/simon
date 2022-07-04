@@ -22,16 +22,27 @@ const useGameLogic = () => {
     );
   };
 
+  const reset = useCallback(() => {
+    setScore(-1);
+    setHighLight(null);
+    setNext(false);
+    setPhase('machine');
+    setEndGame(null);
+    gameData.current = {
+      index: 0,
+      path: [],
+      inputEnabled: false,
+    };
+  }, []);
+
   useEffect(() => {
-    console.log('trying to move the game');
     if (next) {
-      console.log('step');
       if (gameData.current.index < gameData.current.path.length) {
         setHighLight(gameData.current.path[gameData.current.index]);
         setNext(false);
       } else {
         setNext(false);
-        console.log('changing phase');
+
         gameData.current.index = 0;
         setPhase(prevPhase => (prevPhase === 'human' ? 'machine' : 'human'));
       }
@@ -50,11 +61,8 @@ const useGameLogic = () => {
         ) {
           setNext(true);
         }
-      }, 2000);
+      }, 1400);
     } else {
-      console.log(`got here as ${phase}`);
-      console.log('index ' + gameData.current.index);
-
       if (phase === 'machine') {
         if (gameData.current.index === 0) {
           gameData.current.inputEnabled = false;
@@ -88,21 +96,15 @@ const useGameLogic = () => {
         setNext(true);
       } else {
         //TODO bad sound
+        setPhase('pending');
         setEndGame(input);
       }
     }
   };
 
   const start = useCallback(() => {
-    console.log('game started');
     setPhase('machine');
   }, []);
-
-  useEffect(() => {
-    if (phase === 'pending') {
-      console.log(phase);
-    }
-  }, [phase]);
 
   return {
     inputHandler,
@@ -111,6 +113,7 @@ const useGameLogic = () => {
     score,
     highlight,
     phase,
+    reset,
   };
 };
 

@@ -1,29 +1,43 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Pressable, Modal} from 'react-native';
+import {View, StyleSheet, Modal} from 'react-native';
+
 import useGameLogic from '../../../hooks/useGameLogic';
+
 import EndGameModal from './../EndGameModal/EndGameModal';
+import GameTile from './GameTile/GameTile';
 
-const gameButtons = ['green', 'red', 'blue', 'yellow'];
+import {constants} from './../../../styles/constants';
 
-type GameProps = {
+const gameButtons = [
+  constants.simonBlue,
+  constants.simonRed,
+  constants.simonGreen,
+  constants.simonYellow,
+];
+
+type Props = {
   setScore: Function;
   init: boolean;
   setPlayerIcon: any;
+  restart: boolean;
 };
 
-const Game = ({init, setScore, setPlayerIcon}: GameProps) => {
-  const {inputHandler, score, highlight, start, endGameStatus, phase} =
+const Game = ({init, setScore, setPlayerIcon, restart}: Props) => {
+  const {inputHandler, score, highlight, start, endGameStatus, phase, reset} =
     useGameLogic();
-  const [pending, setPending] = useState<number | null>(0);
+
   const [endGameModal, setEndGameModal] = useState(false);
+
+  useEffect(() => {
+    if (restart !== null && restart !== undefined) {
+      setEndGameModal(false);
+      reset();
+    }
+  }, [reset, restart]);
 
   useEffect(() => {
     setPlayerIcon(phase);
   }, [phase, setPlayerIcon]);
-
-  useEffect(() => {
-    console.log('was game ended ' + endGameModal);
-  }, [endGameModal]);
 
   useEffect(() => {
     if (endGameStatus !== null) {
@@ -36,25 +50,15 @@ const Game = ({init, setScore, setPlayerIcon}: GameProps) => {
     if (!init) {
       return;
     }
-    if (pending === 0) {
-      delay = setTimeout(() => {
-        setPending(1);
-      }, 1000);
-    }
-    if (pending === 1) {
-      delay = setTimeout(() => {
-        setPending(2);
-      }, 1000);
-    }
-    if (pending === 2) {
-      delay = setTimeout(() => {
-        start();
-      }, 1000);
-    }
+
+    delay = setTimeout(() => {
+      start();
+    }, 1000);
+
     return () => {
       clearTimeout(delay);
     };
-  }, [init, pending, start]);
+  }, [init, start]);
 
   useEffect(() => {
     if (score >= 0) {
@@ -62,37 +66,23 @@ const Game = ({init, setScore, setPlayerIcon}: GameProps) => {
     }
   }, [score, setScore]);
 
-  const borderStyle = (current: any) =>
-    pending === 1
-      ? styles.pendingBorder
-      : current === endGameStatus
-      ? styles.errorBorder
-      : current === highlight
-      ? styles.activeBorder
-      : styles.border;
-
   return (
     <>
-      <Modal
-        animationType="slide"
-        visible={endGameStatus === null ? false : true}>
+      <Modal animationType="slide" visible={endGameModal}>
         <EndGameModal score={score} />
       </Modal>
+
       <View style={styles.container}>
-        {gameButtons.map((button, index) => (
-          <View
+        {gameButtons.map((buttonColor, index) => (
+          <GameTile
+            init={init}
             key={index}
-            style={[styles.buttonContainer, borderStyle(index)]}>
-            <Pressable
-              disabled={pending !== 2}
-              onPress={() => {
-                if (highlight === null) {
-                  inputHandler(index);
-                }
-              }}
-              style={[styles.button, {backgroundColor: button}]}
-            />
-          </View>
+            index={index}
+            buttonColor={buttonColor}
+            endGameStatus={endGameStatus}
+            highlight={highlight}
+            inputHandler={inputHandler}
+          />
         ))}
       </View>
     </>
@@ -114,9 +104,6 @@ const styles = StyleSheet.create({
     borderWidth: 0.1,
     borderRadius: 10,
     opacity: 1,
-  },
-  border: {
-    backgroundColor: 'grey',
   },
   activeBorder: {
     backgroundColor: '#87fd05',
