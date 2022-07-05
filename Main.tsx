@@ -6,7 +6,7 @@ import GameScreen from './src/screens/GameScreen/GameScreen';
 import ScoreScreen from './src/screens/ScoreScreen/ScoreScreen';
 import {useAppDispatch} from './src/store/hooks';
 import {config} from './src/config/config';
-import {addScore} from './src/store/slices/bestScoresSlice';
+import {setRecords} from './src/store/slices/bestScoresSlice';
 
 const stack = createNativeStackNavigator();
 
@@ -17,7 +17,7 @@ const Main = () => {
       const currentStorage = await AsyncStorage.getItem(config.bestScoresKey);
       if (currentStorage !== null) {
         const bestScores = JSON.parse(currentStorage);
-        dispatch(addScore(bestScores));
+        dispatch(setRecords(bestScores));
       }
     };
     fetchData();

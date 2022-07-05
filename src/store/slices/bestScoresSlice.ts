@@ -14,11 +14,11 @@ const bestScores = createSlice({
   name: 'bestScores',
   initialState,
   reducers: {
-    addScore(state: bestScoreState, action: PayloadAction<Score[]>) {
+    setRecords(state: bestScoreState, action: PayloadAction<Score[]>) {
       state.list = action.payload;
     },
   },
 });
 
-export const {addScore} = bestScores.actions;
+export const {setRecords} = bestScores.actions;
 export default bestScores.reducer;

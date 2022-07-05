@@ -3,7 +3,7 @@ import {View, Text, TextInput, StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {useAppDispatch, useAppSelector} from './../../../store/hooks';
-import {addScore} from '../../../store/slices/bestScoresSlice';
+import {setRecords} from '../../../store/slices/bestScoresSlice';
 
 import {Score} from '../../../models/scoreModel';
 import {config} from './../../../config/config';
@@ -35,7 +35,7 @@ const EndGameModal = ({score}: Props) => {
       sortedData.push(newScoreRecord);
 
       dispatch(
-        addScore(sortedData.sort((a: Score, b: Score) => b.score - a.score)),
+        setRecords(sortedData.sort((a: Score, b: Score) => b.score - a.score)),
       );
 
       AsyncStorage.setItem(config.bestScoresKey, JSON.stringify(sortedData));
