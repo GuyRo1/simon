@@ -1,12 +1,8 @@
 import React, {useState} from 'react';
 import {View, Text, TextInput, StyleSheet} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import {useAppDispatch, useAppSelector} from './../../../store/hooks';
 import {setRecords} from '../../../store/slices/bestScoresSlice';
-
 import {Score} from '../../../models/scoreModel';
-import {config} from './../../../config/config';
 import {useNavigation} from '@react-navigation/native';
 import {generateUUID} from './../../../utils/uuid';
 
@@ -37,8 +33,6 @@ const EndGameModal = ({score}: Props) => {
       dispatch(
         setRecords(sortedData.sort((a: Score, b: Score) => b.score - a.score)),
       );
-
-      AsyncStorage.setItem(config.bestScoresKey, JSON.stringify(sortedData));
     }
     navigator.navigate('topTen');
   };
