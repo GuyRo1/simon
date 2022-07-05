@@ -1,4 +1,5 @@
 import {useState, useEffect, useRef, useCallback} from 'react';
+import sounds from '../sounds/sounds';
 
 const useGameLogic = () => {
   const gameData = useRef<any>({
@@ -38,6 +39,7 @@ const useGameLogic = () => {
   useEffect(() => {
     if (next) {
       if (gameData.current.index < gameData.current.path.length) {
+        sounds.good.play();
         setHighLight(gameData.current.path[gameData.current.index]);
         setNext(false);
       } else {
@@ -92,10 +94,9 @@ const useGameLogic = () => {
   const inputHandler = (input: number) => {
     if (gameData.current.inputEnabled) {
       if (input === gameData.current.path[gameData.current.index]) {
-        //TODO good sound
         setNext(true);
       } else {
-        //TODO bad sound
+        sounds.bad.play();
         setPhase('pending');
         setEndGame(input);
       }
