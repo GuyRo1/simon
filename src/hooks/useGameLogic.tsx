@@ -1,5 +1,15 @@
 import {useState, useEffect, useRef, useCallback} from 'react';
 import {AppSound} from '../context/soundContext';
+import {useAppSelector} from '../store/hooks';
+import {
+  gameDataState,
+  reset as resetGame,
+  setHighLight,
+  setPhase,
+  setEndGameStatus,
+  bumpScore,
+} from './../store/slices/gameSlice';
+import {useAppDispatch} from './../store/hooks';
 
 const useGameLogic = (sounds: AppSound) => {
   const gameData = useRef<any>({
@@ -7,15 +17,12 @@ const useGameLogic = (sounds: AppSound) => {
     path: [],
     inputEnabled: false,
   });
+  const {phase, highlight}: gameDataState = useAppSelector(
+    state => state.gameData,
+  );
+  const dispatch = useAppDispatch();
 
-  const [endGame, setEndGame] = useState<number | null>(null);
-  const [score, setScore] = useState<number>(-1);
-  const [phase, setPhase] = useState<string>('pending');
-  const [highlight, setHighLight] = useState<number | null>(null);
   const [next, setNext] = useState<boolean>(false);
-  const bumpScore = () => {
-    setScore(prevScore => prevScore + 1);
-  };
 
   const addRandomToPath = () => {
     gameData.current.path = gameData.current.path.concat(
@@ -24,11 +31,8 @@ const useGameLogic = (sounds: AppSound) => {
   };
 
   const reset = useCallback(() => {
-    setScore(-1);
-    setHighLight(null);
+    dispatch(resetGame());
     setNext(false);
-    setPhase('machine');
-    setEndGame(null);
     gameData.current = {
       index: 0,
       path: [],
@@ -40,13 +44,13 @@ const useGameLogic = (sounds: AppSound) => {
     if (next) {
       if (gameData.current.index < gameData.current.path.length) {
         sounds.good.play();
-        setHighLight(gameData.current.path[gameData.current.index]);
+        dispatch(setHighLight(gameData.current.path[gameData.current.index]));
         setNext(false);
       } else {
         setNext(false);
 
         gameData.current.index = 0;
-        setPhase(prevPhase => (prevPhase === 'human' ? 'machine' : 'human'));
+        dispatch(setPhase(phase === 'human' ? 'machine' : 'human'));
       }
     }
   }, [next]);
@@ -55,7 +59,7 @@ const useGameLogic = (sounds: AppSound) => {
     let fade: null | number;
     if (highlight !== null) {
       fade = setTimeout(() => {
-        setHighLight(null);
+        dispatch(setHighLight(null));
         gameData.current.index++;
         if (
           phase === 'machine' ||
@@ -83,13 +87,13 @@ const useGameLogic = (sounds: AppSound) => {
         clearTimeout(fade);
       }
     };
-  }, [highlight, phase]);
+  }, [highlight, phase, dispatch]);
 
   useEffect(() => {
     if (phase === 'machine') {
-      bumpScore();
+      dispatch(bumpScore());
     }
-  }, [phase]);
+  }, [phase, dispatch]);
 
   const inputHandler = (input: number) => {
     if (gameData.current.inputEnabled) {
@@ -97,23 +101,19 @@ const useGameLogic = (sounds: AppSound) => {
         setNext(true);
       } else {
         sounds.bad.play();
-        setPhase('pending');
-        setEndGame(input);
+        dispatch(setPhase('pending'));
+        dispatch(setEndGameStatus(input));
       }
     }
   };
 
   const start = useCallback(() => {
-    setPhase('machine');
+    dispatch(setPhase('machine'));
   }, []);
 
   return {
     inputHandler,
     start,
-    endGameStatus: endGame,
-    score,
-    highlight,
-    phase,
     reset,
   };
 };

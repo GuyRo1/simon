@@ -8,6 +8,7 @@ import GameTile from './GameTile/GameTile';
 
 import {constants} from './../../../styles/constants';
 import {soundsContext} from './../../../context/soundContext';
+import {useAppSelector} from '../../../store/hooks';
 
 const gameButtons = [
   constants.simonBlue,
@@ -19,16 +20,14 @@ const gameButtons = [
 type Props = {
   setScore: Function;
   init: boolean;
-  setPlayerIcon: any;
   restart: boolean;
 };
 
-const Game = ({init, setScore, setPlayerIcon, restart}: Props) => {
+const Game = ({init, restart}: Props) => {
   const sounds = useContext(soundsContext);
-  const {inputHandler, score, highlight, start, endGameStatus, phase, reset} =
-    useGameLogic(sounds);
-
+  const {inputHandler, start, reset} = useGameLogic(sounds);
   const [endGameModal, setEndGameModal] = useState(false);
+  const {endGameStatus, score} = useAppSelector(state => state.gameData);
 
   useEffect(() => {
     if (restart !== null && restart !== undefined) {
@@ -36,10 +35,6 @@ const Game = ({init, setScore, setPlayerIcon, restart}: Props) => {
       reset();
     }
   }, [reset, restart]);
-
-  useEffect(() => {
-    setPlayerIcon(phase);
-  }, [phase, setPlayerIcon]);
 
   useEffect(() => {
     if (endGameStatus !== null) {
@@ -62,12 +57,6 @@ const Game = ({init, setScore, setPlayerIcon, restart}: Props) => {
     };
   }, [init, start]);
 
-  useEffect(() => {
-    if (score >= 0) {
-      setScore(score);
-    }
-  }, [score, setScore]);
-
   return (
     <>
       <Modal animationType="slide" visible={endGameModal}>
@@ -77,13 +66,10 @@ const Game = ({init, setScore, setPlayerIcon, restart}: Props) => {
       <View style={styles.container}>
         {gameButtons.map((buttonColor, index) => (
           <GameTile
-            phase={phase}
             init={init}
             key={index}
             index={index}
             buttonColor={buttonColor}
-            endGameStatus={endGameStatus}
-            highlight={highlight}
             inputHandler={inputHandler}
           />
         ))}

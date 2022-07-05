@@ -5,6 +5,7 @@ import Human from 'react-native-vector-icons/MaterialCommunityIcons';
 import Neutral from 'react-native-vector-icons/Feather';
 
 import {constants} from '../../../styles/constants';
+import {useAppSelector} from '../../../store/hooks';
 
 const selectIcon = (playerData: string) => {
   switch (playerData) {
@@ -20,20 +21,20 @@ const selectIcon = (playerData: string) => {
 };
 
 type Props = {
-  score: number;
   action: () => void;
-  playerIcon: string;
 };
 
-const Header = ({playerIcon, score, action}: Props) => {
+const Header = ({action}: Props) => {
+  const {phase, score} = useAppSelector(state => state.gameData);
+
   return (
     <View style={styles.header}>
       <View style={styles.section}>
-        <Text style={styles.text}>{`Score ${score}`}</Text>
+        <Text style={styles.text}>{`Score ${score >= 0 ? score : 0}`}</Text>
       </View>
 
       <View style={[styles.section, styles.iconContainer]}>
-        {selectIcon(playerIcon)}
+        {selectIcon(phase)}
       </View>
 
       <Pressable onPress={action} style={styles.section}>

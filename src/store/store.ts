@@ -1,5 +1,7 @@
 import {configureStore} from '@reduxjs/toolkit';
 import bestScoresReducer from './slices/bestScoresSlice';
+import gameDataReducer from './slices/gameSlice';
+import {persistConfig} from './persist';
 import {
   FLUSH,
   PAUSE,
@@ -10,11 +12,11 @@ import {
   REGISTER,
   REHYDRATE,
 } from 'redux-persist';
-import {persistConfig} from './persist';
 
 export const store = configureStore({
   reducer: {
     bestScores: persistReducer(persistConfig, bestScoresReducer),
+    gameData: gameDataReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

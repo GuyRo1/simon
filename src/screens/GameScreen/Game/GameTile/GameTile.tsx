@@ -1,25 +1,18 @@
 import React from 'react';
 import {StyleSheet, View, Pressable} from 'react-native';
+import {useAppSelector} from '../../../../store/hooks';
 
 type Props = {
   index: number;
   buttonColor: string;
-  endGameStatus: number | null;
-  highlight: number | null;
   init: boolean;
   inputHandler: (index: number) => void;
-  phase: string;
 };
 
-const GameTile = ({
-  index,
-  buttonColor,
-  endGameStatus,
-  highlight,
-  inputHandler,
-  init,
-  phase,
-}: Props) => {
+const GameTile = ({index, buttonColor, inputHandler, init}: Props) => {
+  const {endGameStatus, highlight, phase} = useAppSelector(
+    state => state.gameData,
+  );
   const borderStyle = (current: any) =>
     current === endGameStatus
       ? styles.errorBorder
