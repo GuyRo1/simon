@@ -3,6 +3,7 @@ import {View, StyleSheet} from 'react-native';
 
 import Header from './Header/Header';
 import Game from './Game/Game';
+import SoundContextProvider from '../../providers/soundContextProvider';
 
 type Props = {
   route: any;
@@ -24,15 +25,16 @@ const GameScreen = ({route}: Props) => {
   return (
     <>
       <Header playerIcon={playerIcon} action={startGame} score={score} />
-
-      <View style={styles.gameContainer}>
-        <Game
-          setPlayerIcon={setPlayerIcon}
-          restart={restart}
-          init={game}
-          setScore={setScore}
-        />
-      </View>
+      <SoundContextProvider>
+        <View style={styles.gameContainer}>
+          <Game
+            setPlayerIcon={setPlayerIcon}
+            restart={restart}
+            init={game}
+            setScore={setScore}
+          />
+        </View>
+      </SoundContextProvider>
     </>
   );
 };

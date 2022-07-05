@@ -1,7 +1,7 @@
 import {useState, useEffect, useRef, useCallback} from 'react';
-import sounds from '../sounds/sounds';
+import {AppSound} from '../context/soundContext';
 
-const useGameLogic = () => {
+const useGameLogic = (sounds: AppSound) => {
   const gameData = useRef<any>({
     index: 0,
     path: [],

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {View, StyleSheet, Modal} from 'react-native';
 
 import useGameLogic from '../../../hooks/useGameLogic';
@@ -7,6 +7,7 @@ import EndGameModal from './../EndGameModal/EndGameModal';
 import GameTile from './GameTile/GameTile';
 
 import {constants} from './../../../styles/constants';
+import {soundsContext} from './../../../context/soundContext';
 
 const gameButtons = [
   constants.simonBlue,
@@ -23,8 +24,9 @@ type Props = {
 };
 
 const Game = ({init, setScore, setPlayerIcon, restart}: Props) => {
+  const sounds = useContext(soundsContext);
   const {inputHandler, score, highlight, start, endGameStatus, phase, reset} =
-    useGameLogic();
+    useGameLogic(sounds);
 
   const [endGameModal, setEndGameModal] = useState(false);
 
