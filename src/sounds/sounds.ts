@@ -5,7 +5,9 @@ export type SoundType = Sound;
 export const getSounds = () => {
   const createSound = (sound: string) => {
     return new Sound(sound, Sound.MAIN_BUNDLE, error => {
-      error ? console.error(error) : console.log(':)');
+      error
+        ? console.error(error)
+        : console.log('music files where loaded to app');
     });
   };
 
