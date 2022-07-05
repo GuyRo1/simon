@@ -10,7 +10,9 @@ const SoundContextProvider = ({children}: {children: React.ReactNode}) => {
   });
   useEffect(() => {
     const loadedSounds = getSounds();
-    setSounds(loadedSounds);
+    if (loadedSounds) {
+      setSounds(loadedSounds);
+    }
   }, []);
 
   return (

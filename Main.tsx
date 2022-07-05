@@ -22,6 +22,7 @@ const Main = () => {
     };
     fetchData();
   }, []);
+
   return (
     <NavigationContainer>
       <stack.Navigator
