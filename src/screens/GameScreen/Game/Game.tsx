@@ -77,6 +77,7 @@ const Game = ({init, setScore, setPlayerIcon, restart}: Props) => {
       <View style={styles.container}>
         {gameButtons.map((buttonColor, index) => (
           <GameTile
+            phase={phase}
             init={init}
             key={index}
             index={index}

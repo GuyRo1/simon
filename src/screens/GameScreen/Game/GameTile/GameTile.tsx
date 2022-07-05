@@ -4,11 +4,11 @@ import {StyleSheet, View, Pressable} from 'react-native';
 type Props = {
   index: number;
   buttonColor: string;
-
   endGameStatus: number | null;
   highlight: number | null;
   init: boolean;
   inputHandler: (index: number) => void;
+  phase: string;
 };
 
 const GameTile = ({
@@ -18,13 +18,16 @@ const GameTile = ({
   highlight,
   inputHandler,
   init,
+  phase,
 }: Props) => {
   const borderStyle = (current: any) =>
     current === endGameStatus
       ? styles.errorBorder
       : current === highlight
       ? styles.activeBorder
-      : styles.border;
+      : phase === 'machine'
+      ? styles.computerBorder
+      : styles.humanBorder;
 
   const handlePress = () => {
     if (highlight === null) {
@@ -54,20 +57,18 @@ const styles = StyleSheet.create({
   button: {
     flex: 2 / 3,
     width: 330,
-    borderWidth: 0.1,
     borderRadius: 10,
-    opacity: 1,
   },
-  border: {
+  humanBorder: {
     backgroundColor: 'white',
+  },
+  computerBorder: {
+    backgroundColor: '#bfbcbb',
   },
   activeBorder: {
     backgroundColor: '#87fd05',
   },
   errorBorder: {
     backgroundColor: 'pink',
-  },
-  pendingBorder: {
-    backgroundColor: 'orange',
   },
 });
